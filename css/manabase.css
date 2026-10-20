@@ -1,0 +1,885 @@
+/*
+    The mobile site, on top of weaver's dark theme (style-dark.css, with
+    Bootstrap 3). Mobile first: the wide-screen rules are at the end.
+    The code editor's colours are in editors/codemirror/editor.js; keep the
+    two in step.
+*/
+
+:root {
+    --bg: #060818;
+    --surface: #11152a;
+    --surface-raised: #1b1e35;
+    --border: #3b3f5c;
+    --text: #e0e2ec;
+    --muted: #8a90ad;
+    --accent: #1ab394;
+    --accent-strong: #23d1ad;
+    --danger: #ff6b76;
+    --danger-bg: #2a1219;
+    --success-bg: #0d2620;
+    --bar-height: 56px;
+    --mono: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+/* Bootstrap's .btn and others would show a [hidden] element anyway. */
+[hidden] {
+    display: none !important;
+}
+
+body,
+#page-wrapper,
+.gray-bg {
+    background-color: var(--bg);
+}
+
+body {
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+/* Weaver's page frame. Its overflow-x: hidden would make #wrapper a scroll
+   container, and the course bar would then not stick to the top; clip
+   cuts off the same overflow without that. */
+#wrapper {
+    overflow-x: clip;
+}
+
+/* Tightened for a phone. */
+.wrapper-content {
+    padding: 16px 0 32px;
+}
+
+@media (max-width: 767px) {
+    #page-wrapper {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #page-wrapper > .row.border-bottom {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+#app {
+    min-height: 60vh;
+}
+
+#app a:not(.btn) {
+    color: var(--accent-strong);
+}
+
+/* The navigation bar: bigger targets in the phone menu. */
+.top-navigation .navbar-nav > li > a,
+.top-navigation .navbar-top-links > li > a {
+    font-size: 16px;
+}
+
+.top-navigation .navbar-collapse.in .nav > li > a,
+.top-navigation .navbar-collapse.collapsing .nav > li > a {
+    padding: 14px 20px;
+}
+
+@media (max-width: 767px) {
+    /* Lined up with the left-hand entries, as .navbar-nav does. */
+    .top-navigation .navbar-top-links {
+        margin: 0 -15px 7px;
+        padding: 0;
+        float: none !important;
+    }
+
+    .top-navigation .navbar-top-links > li {
+        display: block;
+    }
+
+    .top-navigation .navbar-top-links > li > a {
+        padding: 14px 20px;
+        min-height: 0;
+    }
+}
+
+.nav-label .fa {
+    margin-right: 6px;
+}
+
+/* Pages */
+
+.page {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 4px 0 18px;
+}
+
+.page p,
+.lead-text {
+    color: var(--text);
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    padding: 24px 0;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: manabase-spin 0.8s linear infinite;
+}
+
+@keyframes manabase-spin {
+    to { transform: rotate(360deg); }
+}
+
+.card-box,
+.course-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.card-box p:last-of-type {
+    margin-bottom: 12px;
+}
+
+.course-card-title,
+.course-card-title:hover,
+.course-card-title:focus {
+    text-decoration: none;
+}
+
+.course-card-title h2 {
+    font-size: 21px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--accent-strong);
+}
+
+.course-card-description {
+    color: var(--muted);
+    font-size: 15px;
+    cursor: pointer;
+}
+
+/* A long description shows its first lines until tapped. */
+.course-card-description.clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+}
+
+.course-card-progress {
+    margin: 12px 0;
+}
+
+.course-card-revision {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.progress-text {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.progress {
+    height: 8px;
+    margin-bottom: 6px;
+    background: var(--surface-raised);
+    border-radius: 4px;
+    box-shadow: none;
+}
+
+.progress-bar {
+    background: var(--accent);
+}
+
+/* Buttons and forms: thumb-sized. */
+
+.btn {
+    border-radius: 8px;
+    min-height: 44px;
+    font-size: 16px;
+}
+
+.btn-sm {
+    min-height: 36px;
+    font-size: 14px;
+}
+
+.btn-lg {
+    min-height: 52px;
+    font-size: 17px;
+}
+
+.btn-default,
+.btn-default:focus {
+    background: var(--surface-raised);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.btn-default:hover,
+.btn-default:active,
+.btn-default.active {
+    background: #262a4a;
+    border-color: #4b5078;
+    color: #fff;
+}
+
+.btn-primary[disabled],
+.btn-default[disabled] {
+    opacity: 0.55;
+}
+
+.btn-link {
+    color: var(--muted);
+}
+
+.form-control {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    font-size: 16px; /* smaller makes iOS zoom in on focus */
+    height: auto;
+    padding: 12px 14px;
+}
+
+.form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(26, 179, 148, 0.25);
+}
+
+.account-form {
+    display: grid;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.account-switch {
+    margin-top: 20px;
+    color: var(--muted);
+}
+
+.form-feedback:empty {
+    display: none;
+}
+
+.form-feedback .btn {
+    margin-top: 8px;
+}
+
+#app .btn-block + .btn-block,
+#app .btn + .form-feedback {
+    margin-top: 12px;
+}
+
+/* Alerts, which the light theme draws in pastels. */
+
+.alert {
+    border-radius: 8px;
+    border-width: 1px;
+}
+
+.alert-success {
+    background: var(--success-bg);
+    border-color: #1a5c4c;
+    color: #8ff0d6;
+}
+
+.alert-danger {
+    background: var(--danger-bg);
+    border-color: #6b2630;
+    color: #ffb3ba;
+}
+
+.alert .rich-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* Problem text */
+
+.rich-text p {
+    white-space: pre-line; /* list items keep their own lines */
+    overflow-wrap: anywhere;
+}
+
+.code-block {
+    margin: 0 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+}
+
+/* Until the editor script loads, and if it never does. */
+.code-block > pre,
+.code-editor > pre {
+    margin: 0;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 0;
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 20px;
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* The course screen */
+
+body.on-course .wrapper-content {
+    padding-top: 0;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+.course-bar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: var(--bar-height);
+    margin: 0 -15px 16px;
+    padding: 0 15px;
+    background: rgba(6, 8, 24, 0.94);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(6px);
+}
+
+.course-bar-toggle {
+    flex: none;
+    min-height: 40px;
+    padding: 6px 12px;
+}
+
+.course-bar-title {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.course-bar-count {
+    flex: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+
+.revision-mode .course-bar-count::before {
+    content: "\21BB  ";
+    color: #f8ac59;
+}
+
+/* The drawer: off the left edge until opened. */
+
+.course-drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    width: min(86vw, 340px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    transform: translateX(-102%);
+    transition: transform 0.22s ease-out;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.drawer-open .course-drawer {
+    transform: none;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+}
+
+.drawer-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.drawer-open .drawer-backdrop {
+    display: block;
+}
+
+body.drawer-open {
+    overflow: hidden;
+}
+
+.drawer-head {
+    display: flex;
+    align-items: center;
+    padding: 12px 8px 4px 16px;
+}
+
+.drawer-title {
+    flex: 1;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.drawer-close {
+    font-size: 22px;
+    min-width: 44px;
+}
+
+.revision-box {
+    margin: 8px 12px 12px;
+    padding: 12px;
+    background: var(--surface-raised);
+    border-radius: 8px;
+}
+
+.revision-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.revision-help-toggle {
+    font-size: 20px;
+    min-height: 36px;
+    padding: 0 6px;
+}
+
+.revision-help {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.revision-status {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 6px 0;
+}
+
+.revision-box .btn {
+    margin-top: 4px;
+}
+
+/* A switch for revision mode, made of a checkbox. */
+.switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 36px;
+}
+
+.switch input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.switch-track {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: var(--border);
+    transition: background 0.15s;
+}
+
+.switch-track::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.15s;
+}
+
+.switch input:checked + .switch-track {
+    background: var(--accent);
+}
+
+.switch input:checked + .switch-track::after {
+    transform: translateX(18px);
+}
+
+.switch input:focus-visible + .switch-track {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 2px;
+}
+
+.switch input:disabled + .switch-track {
+    opacity: 0.5;
+}
+
+/* The problem tree */
+
+.problem-tree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.problem-tree ul ul {
+    padding-left: 14px;
+}
+
+.problem-tree summary,
+.tree-problem {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 10px 16px;
+    min-height: 44px;
+    color: var(--text);
+}
+
+.problem-tree summary {
+    cursor: pointer;
+    font-weight: 600;
+    list-style: none;
+}
+
+.problem-tree summary::-webkit-details-marker {
+    display: none;
+}
+
+.problem-tree summary::after {
+    content: "\25B8";
+    color: var(--muted);
+    margin-left: 4px;
+    transition: transform 0.15s;
+}
+
+.problem-tree details[open] > summary::after {
+    transform: rotate(90deg);
+}
+
+#app a.tree-problem {
+    color: var(--text);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+}
+
+.tree-problem.current {
+    background: rgba(26, 179, 148, 0.12);
+    border-left-color: var(--accent) !important;
+}
+
+.problem-tree .tree-mark {
+    flex: none;
+    width: 1em;
+    color: var(--muted);
+}
+
+.problem-tree .solved > .tree-mark {
+    color: var(--accent-strong);
+}
+
+.tree-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.problem-tree .count,
+.problem-tree .times {
+    flex: none;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: normal;
+    font-variant-numeric: tabular-nums;
+}
+
+/* The problem */
+
+.problem {
+    max-width: 760px;
+    margin: 0 auto;
+    min-width: 0;
+}
+
+.problem-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 14px;
+    line-height: 1.25;
+}
+
+.problem-title .solved-mark {
+    display: none;
+}
+
+.problem-title.solved {
+    color: var(--accent-strong);
+}
+
+.problem-title.solved .solved-mark {
+    display: inline;
+}
+
+.problem-question p {
+    font-weight: 600;
+}
+
+.choices {
+    display: grid;
+    gap: 10px;
+    margin: 6px 0 16px;
+}
+
+.choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-weight: normal;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.choice input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 2px 0 0;
+    accent-color: var(--accent);
+}
+
+.choice-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.choice:has(input:checked) {
+    border-color: var(--accent);
+    background: rgba(26, 179, 148, 0.1);
+}
+
+.code-editor {
+    height: max(240px, 45vh);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #0b0e1c;
+}
+
+.code-editor-local {
+    height: auto;
+    max-height: 45vh;
+    overflow: auto;
+}
+
+.code-fallback {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 10px;
+    background: #0b0e1c;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 16px;
+    resize: none;
+}
+
+/* The keys a phone keyboard hides. A mouse and keyboard need none. */
+.key-bar {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 8px 0 4px;
+    margin-bottom: 8px;
+    scrollbar-width: none;
+}
+
+.key-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.key-bar .btn {
+    flex: none;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 4px 10px;
+    font-family: var(--mono);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .key-bar {
+        display: none;
+    }
+
+    .code-editor {
+        margin-bottom: 12px;
+    }
+}
+
+.button-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.run-output {
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    max-height: 50vh;
+    overflow: auto;
+    background: #0b0e1c;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 14px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.paste-label {
+    display: block;
+    margin: 16px 0 6px;
+}
+
+.paste-box {
+    font-family: var(--mono);
+    margin-bottom: 12px;
+}
+
+.feedback {
+    margin-top: 16px;
+    scroll-margin-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+/* Previous and Next, along the bottom. */
+
+.problem-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.problem-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 8px 14px;
+    background: var(--surface);
+    font-size: 15px;
+    text-decoration: none;
+    min-width: 0;
+}
+
+#app .problem-nav a {
+    color: var(--text);
+}
+
+#app .problem-nav a.disabled {
+    color: var(--border);
+    pointer-events: none;
+}
+
+.problem-nav-next {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.problem-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.problem-nav-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Wide screens: the tree is a column beside the problem. */
+
+@media (min-width: 992px) {
+    .course-layout {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+    }
+
+    .course-drawer {
+        position: sticky;
+        top: calc(var(--bar-height) + 16px);
+        z-index: auto;
+        width: auto;
+        max-height: calc(100vh - var(--bar-height) - 112px);
+        transform: none;
+        transition: none;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+    }
+
+    .course-bar-toggle,
+    .drawer-close,
+    .drawer-backdrop,
+    .drawer-open .drawer-backdrop {
+        display: none;
+    }
+
+    body.drawer-open {
+        overflow: auto;
+    }
+
+    .problem {
+        margin: 0;
+    }
+}

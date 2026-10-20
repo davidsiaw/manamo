@@ -1,0 +1,26 @@
+#!/bin/bash
+# Copies the language runtimes from the frontend, which builds them
+# (../frontend/docs/runtimes.md), into js/runtimes/, where the site loads
+# them. Every runtime's worker.js finds its other files relative to itself,
+# so they work unchanged from here.
+#
+#   bin/sync-runtimes [path to the frontend]     # default: ../frontend
+#
+# Ruby is committed there and here. Zig is not committed in either: build it
+# in the frontend first (runtimes/zig/build), then run this.
+set -euo pipefail
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+frontend=$(cd "${1:-$root/../frontend}" && pwd)
+src=$frontend/Resources/runtimes
+dest=$root/js/runtimes
+
+for runtime in "$src"/*/; do
+  name=$(basename "$runtime")
+  rm -rf "${dest:?}/$name"
+  mkdir -p "$dest/$name"
+  cp -R "$runtime". "$dest/$name/"
+  echo "$name: $(du -sh "$dest/$name" | cut -f1)"
+done
+
+[ -f "$dest/zig/worker.js" ] || echo "No Zig runtime: run runtimes/zig/build in $frontend, then this again." >&2

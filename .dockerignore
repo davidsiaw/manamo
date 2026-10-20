@@ -1,0 +1,7 @@
+.git
+build
+cache
+**/.bundle
+**/vendor
+.pi-sessions
+**/.DS_Store

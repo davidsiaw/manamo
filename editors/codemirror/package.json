@@ -1,0 +1,15 @@
+{
+  "name": "manabase-mobile-code-editor",
+  "private": true,
+  "description": "Bundles CodeMirror 6 into js/editors/codemirror/codemirror.js. Run ./build.",
+  "dependencies": {
+    "@codemirror/autocomplete": "6.20.3",
+    "@codemirror/commands": "6.11.1",
+    "@codemirror/language": "6.13.1",
+    "@codemirror/legacy-modes": "6.5.5",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.14",
+    "@lezer/highlight": "1.2.5",
+    "esbuild": "0.28.2"
+  }
+}

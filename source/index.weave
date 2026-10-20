@@ -1,0 +1,47 @@
+# The whole site is this one page; the screens are drawn by js/manabase/
+# from the URL hash (#/courses/..., #/me, ...), as in ../frontend.
+#
+# API_BASE_URL comes from the environment of the weaver process, in preview
+# and in `weaver build` alike (Heighliner.config sets it).
+require 'json'
+
+api_base_url = ENV.fetch('API_BASE_URL', 'http://localhost:3000/api/v1')
+
+topnav_page "", "Manabase", theme: 'dark' do
+  head do
+    meta name: 'theme-color', content: '#0b0e1c'
+    meta name: 'color-scheme', content: 'dark'
+  end
+
+  brand "Manabase"
+
+  # Links start with "/" so weaver keeps them in this tab (it opens any
+  # other link in a new one). The account entries are shown and hidden by
+  # app.js, according to who the learner is.
+  menu do
+    nav "Courses", :book, "/#/"
+    nav "My progress", :line_chart, "/#/me"
+    nav "", :user, "/#/me", position: :right, class: 'account-email', style: 'display: none'
+    nav "Register", :user_plus, "/#/register", position: :right, class: 'account-register', style: 'display: none'
+    nav "Log in", :key, "/#/login", position: :right, class: 'account-login', style: 'display: none'
+    nav "Log out", :sign_out, "/#/", position: :right, class: 'account-logout', style: 'display: none'
+  end
+
+  request_css 'css/manabase.css'
+  request_js 'js/manabase/logic.js'
+  request_js 'js/manabase/runner.js'
+  request_js 'js/manabase/dom.js'
+  request_js 'js/manabase/app.js'
+  request_js 'js/manabase/course.js'
+
+  write_script_once "window.MANABASE_CONFIG = #{JSON.generate(apiBaseUrl: api_base_url)};"
+  on_page_load "new ManabaseApp(window.MANABASE_CONFIG).start();"
+
+  row do
+    col 12 do
+      div id: 'app' do
+        noscript "Manabase needs JavaScript."
+      end
+    end
+  end
+end

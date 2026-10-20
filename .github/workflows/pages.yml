@@ -1,0 +1,71 @@
+name: pages
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Unit tests
+        run: node --test
+
+      # The Zig runtime is built by the frontend and not committed here.
+      - uses: actions/checkout@v5
+        with:
+          repository: davidsiaw/manafe
+          path: manafe
+
+      - uses: actions/cache@v4
+        with:
+          path: .zig-build
+          key: zig-runtime-${{ hashFiles('manafe/runtimes/zig/**') }}
+          restore-keys: zig-runtime-
+
+      - name: Build the runtimes
+        run: |
+          WORK_DIR="$PWD/.zig-build" manafe/runtimes/zig/build
+          bin/sync-runtimes manafe
+
+      - name: Build the site
+        env:
+          API_BASE_URL: https://manabase.astrobunny.net/api/v1
+        run: |
+          bundle exec weaver build
+          rm -rf build/js/MathJax
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build
+          retention-days: 7
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-26.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,40 @@
+#!/bin/bash
+# Bundles the code editor, CodeMirror 6 with editor.js as its entry point,
+# into js/editors/codemirror/codemirror.js, which is committed so that the
+# site needs no npm packages. Adapted from ../frontend/editors/codemirror:
+# the same API, with a dark theme and settings for touch keyboards.
+#
+#   editors/codemirror/build          # from the repository root
+#
+# To update CodeMirror: change the versions in package.json, delete
+# package-lock.json, and run this; commit all three.
+set -euo pipefail
+
+here=$(cd "$(dirname "$0")" && pwd)
+root=$(cd "$here/../.." && pwd)
+# node_modules goes outside the repository: weaver serves and copies js/.
+work=${WORK_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/manabase-mobile-codemirror}
+out=$root/js/editors/codemirror
+mkdir -p "$work" "$out"
+
+cp "$here/package.json" "$here"/*.js "$work/"
+if [ -f "$here/package-lock.json" ]; then
+  cp "$here/package-lock.json" "$work/"
+  (cd "$work" && npm ci --no-audit --no-fund)
+else
+  (cd "$work" && npm install --no-audit --no-fund)
+  cp "$work/package-lock.json" "$here/"
+fi
+
+(cd "$work" && npx esbuild editor.js --bundle --minify --format=iife --target=es2020 \
+  --legal-comments=eof --outfile="$out/codemirror.js")
+
+# The bundle drops the packages' licence headers; keep their licences beside
+# it. Everything installed is bundled, apart from esbuild itself.
+(cd "$work/node_modules" && for pkg in $(ls -d @*/* [!@]* | grep -v esbuild); do
+  for license in "$pkg"/LICENSE*; do
+    [ -f "$license" ] && printf '== %s ==\n\n%s\n\n' "$pkg" "$(cat "$license")"
+  done
+done) > "$out/LICENSES.txt"
+
+ls -l "$out/codemirror.js" "$out/LICENSES.txt"
