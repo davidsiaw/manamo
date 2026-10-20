@@ -25,7 +25,8 @@ jobs:
           bundler-cache: true
 
       - name: Unit tests
-        run: node --test
+        # Only test/: bundler-cache puts gems in vendor/bundle, which has test files of its own.
+        run: node --test 'test/**/*.test.js'
 
       # The Zig runtime is built by the frontend and not committed here.
       - uses: actions/checkout@v5
